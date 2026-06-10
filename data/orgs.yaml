@@ -132,8 +132,12 @@
   parent: vca
 
 - id: scm-property
-  name: SCM Property Management
+  name: Property Management
   parent: scm
+
+- id: equipment
+  name: Equipment Management
+  parent: scm-property
 
 - id: bifs
   name: Business Intelligence & Finance Systems (BIFS)

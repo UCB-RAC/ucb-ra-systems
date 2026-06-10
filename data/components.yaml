@@ -217,9 +217,8 @@
   provided_by: In-house (bIT)
   run_by: [bit]
   technical_owner: David Turner / Eric Anglim
-  business_owner: [scm-property]
+  business_owner: [equipment]
   users: SCM Asset Mgmt, dept custodial managers; CGA relies on it for federal compliance
-  verified: false
 
 # ── HR & personnel ──────────────────────────────────────────
 
