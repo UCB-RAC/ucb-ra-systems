@@ -196,7 +196,7 @@
   category: Financial Management
   platform: PeopleSoft Financials 9.3
   provided_by: Oracle (PeopleSoft)
-  run_by: [bit-bfs]
+  run_by: [bfs]
   technical_owner: Tracy Okamura
   business_owner: [vcf]
   modules:
@@ -250,14 +250,13 @@
   name: CalTime
   kind: system
   category: HR & Personnel
-  platform: Kronos (?)
+  platform: Kronos
   provided_by: UKG (Kronos)
   run_by: [bit]
   technical_owner: Crystal Parkinson, Payroll (VCF)
   business_owner: [payroll]
   apis: yes
   status: being-replaced
-  verified: false
 
 - id: student-hiring-smartsheet
   name: Student Hiring Smartsheet

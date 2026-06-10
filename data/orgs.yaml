@@ -103,7 +103,6 @@
 - id: people-culture
   name: People & Culture
   parent: vca
-  verified: false
 
 - id: ehs
   name: Environment, Health & Safety (EH&S)
@@ -122,10 +121,17 @@
   name: Contracts & Grants Accounting (CGA)
   parent: vcf
 
-- id: payroll
-  name: Payroll Office
+- id: controller
+  name: Controller
   parent: vcf
-  verified: false
+
+- id: payroll
+  name: Payroll Policy and Controls
+  parent: controller
+
+- id: bfs
+  name: BFS Business Systems
+  parent: controller
 
 - id: scm
   name: Supply Chain Management (SCM)
@@ -139,11 +145,13 @@
   name: Equipment Management
   parent: scm-property
 
-- id: bifs
-  name: Business Intelligence & Finance Systems (BIFS)
+- id: fpa
+  name: Financial Planning and Analysis
   parent: vcf
-  verified: false
-  note: Sheet says "Berkeley IT / VCF" — dual affiliation; placed under VCF.
+
+- id: bifs
+  name: Business Intelligence and Finance Systems
+  parent: fpa
 
 # ── Central IT ──────────────────────────────────────────────
 # central_it: true marks the subtree used by the "Central IT touchpoints" view.
@@ -155,10 +163,6 @@
 - id: bit-cad
   name: bIT Campus Applications & Data
   parent: bit
-
-- id: bit-bfs
-  name: BFS Business Systems
-  parent: bit-cad
 
 - id: bit-data
   name: bIT Data Solutions
