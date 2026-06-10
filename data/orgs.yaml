@@ -68,7 +68,6 @@
 - id: vspa
   name: Visiting Scholar & Postdoc Affairs (VSPA)
   parent: vcr
-  verified: false
 
 - id: nhm
   name: Natural History Museums / Research Museums
@@ -109,7 +108,6 @@
 - id: ehs
   name: Environment, Health & Safety (EH&S)
   parent: vca
-  verified: false
 
 - id: ehs-it
   name: EH&S IT
@@ -131,8 +129,7 @@
 
 - id: scm
   name: Supply Chain Management (SCM)
-  parent: vcf
-  verified: false
+  parent: vca
 
 - id: scm-property
   name: SCM Property Management
