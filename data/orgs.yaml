@@ -93,9 +93,8 @@
   parent: brs
 
 - id: share
-  name: SHARE Region (RA)
+  name: SHARE Region
   parent: brs
-  verified: false
 
 - id: ucpath-campus
   name: UCPath Campus Team
@@ -149,7 +148,7 @@
 # central_it: true marks the subtree used by the "Central IT touchpoints" view.
 - id: bit
   name: Berkeley IT (bIT) — Office of the CIO
-  parent: ucb
+  parent: vca
   central_it: true
 
 - id: bit-cad
@@ -187,11 +186,15 @@
 
 - id: erso
   name: Engineering Research Support Organization (ERSO)
-  parent: coe
+  parent: brs
 
 - id: erso-it
   name: ERSO IT
   parent: erso
+
+- id: apo
+  name: Academic Personnel Office
+  parent: ucb
 
 # ── UCOP (Berkeley does not control these) ─────────────────
 - id: ucop
@@ -221,3 +224,7 @@
   name: External Vendors / SaaS
   parent: null
   note: Catch-all for vendor-operated systems with no campus operator.
+
+- id: clarivate
+  name: Clarivate
+  parent: vendors

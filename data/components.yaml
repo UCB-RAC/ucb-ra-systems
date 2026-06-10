@@ -45,29 +45,29 @@
   run_by: [bit-oracle]
   verified: false
 
-- id: sharepoint
-  name: SharePoint / Microsoft 365
+- id: calshare
+  name: CalShare
   kind: platform
   category: Infrastructure
   platform: Microsoft SharePoint Online
   provided_by: Microsoft
+  business_owner: bit
   run_by: [bit]
-  verified: false
-  note: Assumed bIT-administered campus M365 tenant.
+  verified: true
+  note: bIT-administered campus M365 tenant
 
 # ── Funding discovery ───────────────────────────────────────
 
 - id: pivot
-  name: Pivot (Clarivate)
+  name: Pivot RP
   kind: system
   category: Funding Discovery
   platform: Clarivate Pivot-RP (SaaS)
   provided_by: Clarivate
-  run_by: [vendors]
+  run_by: [clarivate]
   business_owner: [brdo]
   users: researchers
   apis: unknown
-  verified: false
 
 - id: infoready
   name: InfoReady
@@ -210,7 +210,7 @@
   note: Modules listed rather than modeled as applications; promote one if it needs its own flows.
 
 - id: bets
-  name: BETS (Berkeley Equipment Tracking System)
+  name: Berkeley Equipment Tracking System (BETS)
   kind: system
   category: Financial Management
   platform: Bespoke Adobe ColdFusion (1990s, CFML)
@@ -272,10 +272,10 @@
   note: Sparse row in source sheet — operator/owner guessed.
 
 - id: gateway
-  name: Gateway
+  name: VSPA Gateway
   kind: system
   category: HR & Personnel
-  platform: Gateway
+  platform: Ruby on Rails
   provided_by: In-house (bIT, funded by VSPA)
   run_by: [bit]
   business_owner: [vspa]
@@ -296,16 +296,25 @@
   status: being-replaced
   verified: false
 
-- id: ross-rachel
-  name: R.O.S.S. / R.A.C.H.E.L.
+- id: ross
+  name: R.O.S.S.
   kind: application
   category: Compliance
   platform: SharePoint
-  uses: [sharepoint]
-  provided_by: In-house (RAC IS)
+  uses: [calshare]
   run_by: [rac-is]
   business_owner: [rac]
-  note: COI / outside-activity disclosure applications built on SharePoint, alongside Phoebe.
+  note: COI / outside-activity disclosure applications built on SharePoint
+
+- id: rachel
+  name: R.A.C.H.E.L.
+  kind: application
+  category: Compliance
+  platform: SharePoint
+  uses: [calshare]
+  run_by: [rac-is]
+  business_owner: [rac]
+  note: COI / outside-activity disclosure applications built on SharePoint
 
 - id: eprotocol
   name: Berkeley eProtocol
@@ -315,7 +324,7 @@
   provided_by: Key Solutions
   run_by: [bit-oracle, bit-unix]
   technical_owner: Ken Geis, RAC IS (VCR)
-  business_owner: [rac]
+  business_owner: [ophs, oacu]
   uses: [oracle-db]
   apis: yes
   note: Vendor-developed, administered by bIT Oracle and Unix teams, technical owner in RAC IS.
@@ -351,35 +360,55 @@
   note: Lab animal financial tracking, billing, space management.
 
 - id: ehs-webapps
-  name: EH&S Web Apps + RSS solutions
+  name: EH&S Web Apps
   kind: system
   category: Compliance
-  platform: Bespoke + Risk & Safety Solutions (UC)
-  provided_by: In-house (EH&S IT) + UC RSS
+  platform: Bespoke 
+  provided_by: In-house (EH&S IT)
   run_by: [ehs-it]
   business_owner: [ehs]
   note: Biosafety/IBC, hazardous materials, radiation compliance.
 
+- id: ehs-rss
+  name: EH&S RSS solutions
+  kind: system
+  category: Compliance
+  platform: Risk & Safety Solutions (UC)
+  provided_by: UC RSS
+  run_by: [uc-rss]
+  business_owner: [ehs]
+  note: Biosafety/IBC, hazardous materials, radiation compliance.
+
 - id: oats
-  name: UC OATS
+  name: Outside Activity Tracking System (UC OATS)
   kind: system
   category: Compliance
   platform: UC OATS
   provided_by: UC OATS Program
   run_by: [uc-oats]
-  business_owner: [vcr]
+  business_owner: [apo]
   users: researchers
-  verified: false
   note: Conflict of commitment / outside activity tracking.
 
 # ── Innovation & tech transfer ──────────────────────────────
 
-- id: pts-evolve
-  name: PTS → Evolve
+- id: pts
+  name: PTS
   kind: system
   category: Innovation & Tech Transfer
-  platform: PTS homegrown (UCOP); Evolve is Wellspring (July 2026)
-  provided_by: UCOP (PTS); Wellspring (Evolve)
+  platform: homegrown (UCOP)
+  provided_by: UCOP (PTS)
+  run_by: [ucop-it]
+  business_owner: [ipira]
+  status: sunsetting
+  note: Invention disclosures, patents, licensing, royalties, startups, equity.
+
+- id: evolve
+  name: Evolve
+  kind: system
+  category: Innovation & Tech Transfer
+  platform: Wellspring Evolve
+  provided_by: Wellspring
   run_by: [ucop-it]
   business_owner: [ipira]
   status: forthcoming
