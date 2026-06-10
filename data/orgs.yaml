@@ -1,0 +1,223 @@
+# Org tree for research administration at UC Berkeley.
+# Each entry: id (unique slug), name, parent (id or null for a root), optional note.
+# Multiple roots (parent: null) are allowed; each renders as its own tree.
+# verified: false  => placement is Claude's best guess; correct and flip to true.
+# Edit freely, then run:  python3 build.py
+
+# ── UC Berkeley ─────────────────────────────────────────────
+- id: ucb
+  name: UC Berkeley
+  parent: null
+
+- id: vcr
+  name: Vice Chancellor for Research (VCR)
+  parent: ucb
+
+- id: rac
+  name: Research Administration & Compliance (RAC)
+  parent: vcr
+
+- id: rac-is
+  name: RAC Information Services (RAC IS)
+  parent: rac
+
+- id: spo
+  name: Sponsored Projects Office (SPO)
+  parent: rac
+
+- id: ophs
+  name: Office for Protection of Human Subjects (OPHS)
+  parent: rac
+
+- id: oacu
+  name: Office of Animal Care & Use (OACU)
+  parent: rac
+
+- id: brdo
+  name: Berkeley Research Development Office (BRDO)
+  parent: vcr
+
+- id: ipira
+  name: IP & Industry Research Alliances (IPIRA)
+  parent: vcr
+
+- id: ipira-it
+  name: IPIRA IT
+  parent: ipira
+
+- id: iao
+  name: Industry Alliances Office (IAO)
+  parent: ipira
+  verified: false
+
+- id: vcs
+  name: Venture Capital Services
+  parent: ipira
+  verified: false
+  note: Hosts Apollo for multiple campuses; reporting line unconfirmed.
+
+- id: research-it
+  name: Research IT
+  parent: vcr
+  note: Confirmed by Ken — under VCR, not bIT.
+
+- id: olac
+  name: Office of Laboratory Animal Care (OLAC)
+  parent: vcr
+
+- id: vspa
+  name: Visiting Scholar & Postdoc Affairs (VSPA)
+  parent: vcr
+  verified: false
+
+- id: nhm
+  name: Natural History Museums / Research Museums
+  parent: vcr
+  verified: false
+
+# ── VC Administration ──────────────────────────────────────
+- id: vca
+  name: Vice Chancellor for Administration (VCA)
+  parent: ucb
+
+- id: brs
+  name: Berkeley Regional Services (BRS)
+  parent: vca
+
+- id: brs-ra
+  name: BRS Research Administration (BRS RA)
+  parent: brs
+
+- id: brs-hr
+  name: BRS HR
+  parent: brs
+
+- id: share
+  name: SHARE Region (RA)
+  parent: brs
+  verified: false
+
+- id: ucpath-campus
+  name: UCPath Campus Team
+  parent: vca
+  verified: false
+
+- id: people-culture
+  name: People & Culture
+  parent: vca
+  verified: false
+
+- id: ehs
+  name: Environment, Health & Safety (EH&S)
+  parent: vca
+  verified: false
+
+- id: ehs-it
+  name: EH&S IT
+  parent: ehs
+
+# ── VC Finance ──────────────────────────────────────────────
+- id: vcf
+  name: Vice Chancellor for Finance (VCF)
+  parent: ucb
+
+- id: cga
+  name: Contracts & Grants Accounting (CGA)
+  parent: vcf
+
+- id: payroll
+  name: Payroll Office
+  parent: vcf
+  verified: false
+
+- id: scm
+  name: Supply Chain Management (SCM)
+  parent: vcf
+  verified: false
+
+- id: scm-property
+  name: SCM Property Management
+  parent: scm
+
+- id: bifs
+  name: Business Intelligence & Finance Systems (BIFS)
+  parent: vcf
+  verified: false
+  note: Sheet says "Berkeley IT / VCF" — dual affiliation; placed under VCF.
+
+# ── Central IT ──────────────────────────────────────────────
+# central_it: true marks the subtree used by the "Central IT touchpoints" view.
+- id: bit
+  name: Berkeley IT (bIT) — Office of the CIO
+  parent: ucb
+  central_it: true
+
+- id: bit-cad
+  name: bIT Campus Applications & Data
+  parent: bit
+
+- id: bit-bfs
+  name: BFS Business Systems
+  parent: bit-cad
+
+- id: bit-data
+  name: bIT Data Solutions
+  parent: bit-cad
+  verified: false
+
+- id: bit-infra
+  name: bIT Infrastructure Services
+  parent: bit
+  verified: false
+
+- id: bit-oracle
+  name: bIT Oracle Team
+  parent: bit-infra
+  verified: false
+
+- id: bit-unix
+  name: bIT Unix Team
+  parent: bit-infra
+  verified: false
+
+# ── Other campus units ─────────────────────────────────────
+- id: coe
+  name: College of Engineering
+  parent: ucb
+
+- id: erso
+  name: Engineering Research Support Organization (ERSO)
+  parent: coe
+
+- id: erso-it
+  name: ERSO IT
+  parent: erso
+
+# ── UCOP (Berkeley does not control these) ─────────────────
+- id: ucop
+  name: UC Office of the President (UCOP)
+  parent: null
+
+- id: ucop-it
+  name: UCOP IT
+  parent: ucop
+
+- id: ucpath-center
+  name: UCPath Center
+  parent: ucop
+
+- id: uc-oats
+  name: UC OATS Program
+  parent: ucop
+  verified: false
+
+- id: uc-rss
+  name: Risk & Safety Solutions (UC)
+  parent: ucop
+  verified: false
+
+# ── External vendors / SaaS with no campus operator ────────
+- id: vendors
+  name: External Vendors / SaaS
+  parent: null
+  note: Catch-all for vendor-operated systems with no campus operator.

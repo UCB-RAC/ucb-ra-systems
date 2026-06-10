@@ -1,0 +1,31 @@
+# Data flows. from/to reference ids in components.yaml or actors.yaml.
+# Fields:
+#   mode: automated (default) | manual   — manual = a human moves the data
+#   via: email                            — optional transport hint (shows ✉ icon)
+#   verified: false => Claude's best guess — CONFIRM OR DELETE.
+# Edit freely, then run:  python3 build.py
+
+- {from: phoebe, to: bfs, label: "Award setup data", verified: true}
+- {from: caltime, to: ucpath, label: "Time & leave for payroll", verified: false}
+- {from: ucpath, to: bfs, label: "Payroll / comp expense distribution", verified: false}
+- {from: ucpath, to: ers, label: "Payroll data for effort certification", verified: false}
+- {from: bfs, to: cal-answers, label: "Financial data to warehouse", verified: true}
+- {from: ucpath, to: cal-answers, label: "HR / payroll data to warehouse", verified: false}
+- {from: ucpath, to: pi-portfolio, label: "Personnel data for cost projections", verified: true}
+- {from: cal-answers, to: pi-portfolio, label: "Award balances & expenditures", verified: true}
+- {from: bfs, to: share-smartsheet, label: "Financial data for RA work queue", verified: true}
+- {from: phoebe, to: share-smartsheet, label: "Proposal/award data for RA work queue", verified: true}
+- {from: cal-answers, to: share-smartsheet, label: "Report data for RA work queue", verified: true}
+- {from: phoebe, to: rac-tableau, label: "Proposal & award reporting data", verified: true}
+- {from: phoebe, to: rac-data-warehouse, label: "Proposal & award reporting data", verified: true}
+- {from: rac-data-warehouse, to: rac-hex, label: "Proposal & award reporting data", verified: true}
+- {from: phoebe, to: artemis, label: "Phoebe data (proposals/awards)", verified: true}
+- {from: bfs, to: bets, label: "Equipment purchase data", verified: false}
+- {from: hr-service-hub, to: ucpath, label: "Personnel actions", verified: false}
+# - {from: eprotocol-irb, to: phoebe, label: "Protocol approval status", verified: false}
+# - {from: eprotocol-iacuc, to: phoebe, label: "Protocol approval status", verified: false}
+- {from: share-intake, to: share-smartsheet, label: "Intake requests → RA tasks (via Asana)", verified: false}
+
+# ── Human / notification flows (examples of mode + via + actor endpoints) ──
+- {from: pi, to: share-intake, label: "Proposal request details", mode: manual, verified: true}
+- {from: ers, to: pi, label: "Effort certification reminders", via: email, verified: false}

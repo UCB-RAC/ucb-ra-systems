@@ -1,0 +1,8 @@
+# Human actors (people/groups) that can be endpoints of data flows,
+# e.g. email notifications from a system to a user population.
+# Fields: id, name, optional note. Ids share a namespace with components.
+
+- id: pi
+  name: Principal Investigators
+- id: ra
+  name: Research Administrators

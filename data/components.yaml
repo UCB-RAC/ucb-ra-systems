@@ -1,0 +1,467 @@
+# Components: platforms, systems, and applications (replaces systems.yaml).
+#
+# Fields:
+#   id              unique slug (referenced by flows.yaml, part_of, uses)
+#   name            display name
+#   kind            platform | system | application
+#                     platform    = shared tech other components run on (VMware, Oracle DB, SharePoint)
+#                     system      = independently deployed & operated software (Phoebe, BFS, eProtocol)
+#                     application = user-facing capability inside a system (PI Portfolio, IRB module)
+#   category        business service / functional area (drives color)
+#   platform        free-text tech stack description
+#   part_of         containing system id (applications only; optional)
+#   uses            [component ids] — platforms/systems this component runs on or depends on
+#   provided_by     who develops/supplies it — vendor name or in-house team (free text)
+#   run_by          [org ids] — who administers/operates it (drives the central-IT view)
+#   technical_owner person — technical owner/contact (free text)
+#   business_owner  [org ids] — whose service it is
+#   users           free text
+#   apis            yes | no | unknown
+#   status          active | being-replaced | forthcoming (default active)
+#   verified        false => contains Claude's guesses — confirm and flip to true
+#   note            free text
+#
+# Applications inherit run_by / business_owner / uses from their part_of system
+# when not set. Edit freely, then run:  python3 build.py  (or uv run python build.py)
+
+# ── Platforms (shared technology) ───────────────────────────
+
+- id: vmware-cluster
+  name: VMware Cluster
+  kind: platform
+  category: Infrastructure
+  platform: VMware vSphere
+  provided_by: Broadcom (VMware)
+  run_by: [bit-infra]
+  verified: false
+  note: Campus virtualization service. Assumed bIT-run — confirm which team.
+
+- id: oracle-db
+  name: Oracle Database Service
+  kind: platform
+  category: Infrastructure
+  platform: Oracle Database
+  provided_by: Oracle
+  run_by: [bit-oracle]
+  verified: false
+
+- id: sharepoint
+  name: SharePoint / Microsoft 365
+  kind: platform
+  category: Infrastructure
+  platform: Microsoft SharePoint Online
+  provided_by: Microsoft
+  run_by: [bit]
+  verified: false
+  note: Assumed bIT-administered campus M365 tenant.
+
+# ── Funding discovery ───────────────────────────────────────
+
+- id: pivot
+  name: Pivot (Clarivate)
+  kind: system
+  category: Funding Discovery
+  platform: Clarivate Pivot-RP (SaaS)
+  provided_by: Clarivate
+  run_by: [vendors]
+  business_owner: [brdo]
+  users: researchers
+  apis: unknown
+  verified: false
+
+- id: infoready
+  name: InfoReady
+  kind: system
+  category: Funding Discovery
+  platform: InfoReady (SaaS)
+  provided_by: InfoReady
+  run_by: [vendors]
+  business_owner: [brdo]
+  users: BRDO, researchers
+  verified: false
+  note: Internal funding competitions, seed grants, limited submissions.
+
+# ── Proposal & award ────────────────────────────────────────
+
+- id: phoebe
+  name: Phoebe
+  kind: system
+  category: Proposal & Award
+  platform: Open source (Kuali, Alfresco, Solr, Camunda) + bespoke
+  provided_by: In-house (RAC IS)
+  run_by: [rac-is]
+  technical_owner: Ken Geis, RAC IS (VCR)
+  business_owner: [spo, rac]
+  uses: [vmware-cluster, oracle-db]
+  users: BRS RA, SPO, IAO, CGA
+  apis: yes
+  note: End-to-end sponsored projects lifecycle — proposal development, routing, award tracking. Also hosts COI disclosure (see ross-rachel for the SharePoint side).
+
+- id: share-intake
+  name: SHARE Proposal Intake Form
+  kind: system
+  category: Proposal & Award
+  platform: Google Form feeding Asana (task assignment to RAs)
+  provided_by: In-house (SHARE)
+  run_by: [share]
+  business_owner: [share]
+  note: Standard pre-award intake form for PIs; routes and assigns RA tasks via Asana.
+
+# ── Analytics & reporting ───────────────────────────────────
+
+- id: rac-data-warehouse
+  name: RAC Data Warehouse
+  kind: system
+  category: Analytics & Reporting
+  platform: PostgreSQL
+  provided_by: In-house (RAC IS)
+  run_by: [rac-is]
+  technical_owner: Ken Geis, RAC IS (VCR)
+  business_owner: [rac]
+  apis: yes
+
+- id: cal-answers
+  name: Cal Answers
+  kind: system
+  category: Analytics & Reporting
+  platform: Oracle Analytics Server (over campus data warehouse)
+  provided_by: Oracle + in-house (bIT)
+  run_by: [bit-data]
+  technical_owner: Danny Grieb, bIT Data Solutions
+  business_owner: [bifs]
+  apis: no
+  verified: false
+
+- id: pi-portfolio
+  name: PI Portfolio
+  kind: application
+  part_of: cal-answers
+  category: Analytics & Reporting
+  platform: Oracle Analytics Server dashboard + Oracle APEX projection app
+  run_by: [bifs]
+  technical_owner: Sharon Trahan, Danny Grieb
+  business_owner: [bifs]
+  apis: no
+  users: PIs, BRS RAs, CGA, CAOs, dept financial analysts
+  note: Subject area within Cal Answers; uses UCPath data for personnel cost projections.
+
+- id: rac-tableau
+  name: RAC Tableau
+  kind: system
+  category: Analytics & Reporting
+  platform: Tableau
+  provided_by: Salesforce (Tableau)
+  run_by: [rac-is]
+  technical_owner: Ken Geis, RAC IS (VCR)
+  business_owner: [rac]
+
+- id: rac-hex
+  name: RAC Hex
+  kind: system
+  category: Analytics & Reporting
+  platform: Hex
+  provided_by: Hex Technologies
+  run_by: [rac-is]
+  technical_owner: Ken Geis, RAC IS (VCR)
+  business_owner: [rac]
+
+# ── Research support portals ────────────────────────────────
+
+- id: erso-intranet
+  name: ERSO Intranet
+  kind: system
+  category: Research Support Portal
+  platform: Ruby on Rails + MySQL (MVC)
+  provided_by: In-house (ERSO IT)
+  run_by: [erso-it]
+  business_owner: [erso]
+  apis: yes
+  note: Single portal integrating finance, C&G, purchasing, T&E, HR, payroll, reporting, compliance with workflow between end users and ERSO staff.
+
+- id: share-smartsheet
+  name: SHARE RA Smartsheet Workspace
+  kind: system
+  category: Research Support Portal
+  platform: Smartsheet (integrating BFS, Phoebe, Cal Answers data)
+  provided_by: Smartsheet
+  run_by: [share]
+  business_owner: [share]
+  note: RA work queue — deficit clearing, payroll suspense, close-outs, budget uploads, cost transfers.
+
+# ── Financial management ────────────────────────────────────
+
+- id: bfs
+  name: Berkeley Financial System (BFS)
+  kind: system
+  category: Financial Management
+  platform: PeopleSoft Financials 9.3
+  provided_by: Oracle (PeopleSoft)
+  run_by: [bit-bfs]
+  technical_owner: Tracy Okamura
+  business_owner: [vcf]
+  modules:
+    - "Project Costing — project-level grant expenditures, payroll distribution, cost transfers, IDC"
+    - "Grants — award setup, sponsor attributes, F&A rates, funding increments"
+    - "Contracts — billing & revenue recognition rules"
+    - "Billing — sponsor invoice generation"
+    - "Accounts Receivable — sponsor receivables, collections"
+    - "General Ledger — official ledger, fiscal close, UCOP reporting"
+  users: CGA, BRS RAs, financial analysts
+  note: Modules listed rather than modeled as applications; promote one if it needs its own flows.
+
+- id: bets
+  name: BETS (Berkeley Equipment Tracking System)
+  kind: system
+  category: Financial Management
+  platform: Bespoke Adobe ColdFusion (1990s, CFML)
+  provided_by: In-house (bIT)
+  run_by: [bit]
+  technical_owner: David Turner / Eric Anglim
+  business_owner: [scm-property]
+  users: SCM Asset Mgmt, dept custodial managers; CGA relies on it for federal compliance
+  verified: false
+
+# ── HR & personnel ──────────────────────────────────────────
+
+- id: ucpath
+  name: UCPath
+  kind: system
+  category: HR & Personnel
+  platform: Oracle (PeopleSoft HCM)
+  provided_by: Oracle (PeopleSoft)
+  run_by: [ucpath-center]
+  technical_owner: Stacey Alvarez, UCPath (VCA)
+  business_owner: [ucpath-campus]
+  apis: yes
+  users: BRS HR, People & Culture, departments
+  note: Hiring/employment and employee funding distribution on grants.
+
+- id: hr-service-hub
+  name: HR Service Hub
+  kind: system
+  category: HR & Personnel
+  platform: ServiceNow
+  provided_by: ServiceNow
+  run_by: [bit]
+  business_owner: [people-culture]
+  verified: false
+  note: Personnel action requests (hire, change, separation). Operator guessed.
+
+- id: caltime
+  name: CalTime
+  kind: system
+  category: HR & Personnel
+  platform: Kronos (?)
+  provided_by: UKG (Kronos)
+  run_by: [bit]
+  technical_owner: Crystal Parkinson, Payroll (VCF)
+  business_owner: [payroll]
+  apis: yes
+  status: being-replaced
+  verified: false
+
+- id: student-hiring-smartsheet
+  name: Student Hiring Smartsheet
+  kind: system
+  category: HR & Personnel
+  platform: Smartsheet
+  provided_by: Smartsheet
+  run_by: [share]
+  business_owner: [share]
+  verified: false
+  note: Sparse row in source sheet — operator/owner guessed.
+
+- id: gateway
+  name: Gateway
+  kind: system
+  category: HR & Personnel
+  platform: Gateway
+  provided_by: In-house (bIT, funded by VSPA)
+  run_by: [bit]
+  business_owner: [vspa]
+  users: VSPA staff, BRS HRPs
+  note: Visiting scholars. bIT programmer paid for by VSPA.
+
+# ── Compliance ──────────────────────────────────────────────
+
+- id: ers
+  name: Effort Reporting System (ERS)
+  kind: system
+  category: Compliance
+  platform: Bespoke; migrating to Huron ECC (SaaS) in 2027
+  provided_by: In-house (UCOP)
+  run_by: [ucop-it]
+  business_owner: [cga]
+  users: PIs, BRS RAs; CGA runs reports, manages settings, trains users, supports audits
+  status: being-replaced
+  verified: false
+
+- id: ross-rachel
+  name: R.O.S.S. / R.A.C.H.E.L.
+  kind: application
+  category: Compliance
+  platform: SharePoint
+  uses: [sharepoint]
+  provided_by: In-house (RAC IS)
+  run_by: [rac-is]
+  business_owner: [rac]
+  note: COI / outside-activity disclosure applications built on SharePoint, alongside Phoebe.
+
+- id: eprotocol
+  name: Berkeley eProtocol
+  kind: system
+  category: Compliance
+  platform: eProtocol (Key Solutions)
+  provided_by: Key Solutions
+  run_by: [bit-oracle, bit-unix]
+  technical_owner: Ken Geis, RAC IS (VCR)
+  business_owner: [rac]
+  uses: [oracle-db]
+  apis: yes
+  note: Vendor-developed, administered by bIT Oracle and Unix teams, technical owner in RAC IS.
+
+- id: eprotocol-irb
+  name: eProtocol IRB module
+  kind: application
+  part_of: eprotocol
+  category: Compliance
+  platform: eProtocol Human Subjects
+  business_owner: [ophs]
+  note: Human subjects protocol submission, review, approval.
+
+- id: eprotocol-iacuc
+  name: eProtocol IACUC module
+  kind: application
+  part_of: eprotocol
+  category: Compliance
+  platform: eProtocol Animal Subjects
+  business_owner: [oacu]
+  note: Animal care & use protocols.
+
+- id: cayuse-vivarium
+  name: Cayuse Vivarium Management
+  kind: system
+  category: Compliance
+  platform: Cayuse (SaaS)
+  provided_by: Cayuse
+  run_by: [vendors]
+  business_owner: [olac]
+  apis: yes
+  verified: false
+  note: Lab animal financial tracking, billing, space management.
+
+- id: ehs-webapps
+  name: EH&S Web Apps + RSS solutions
+  kind: system
+  category: Compliance
+  platform: Bespoke + Risk & Safety Solutions (UC)
+  provided_by: In-house (EH&S IT) + UC RSS
+  run_by: [ehs-it]
+  business_owner: [ehs]
+  note: Biosafety/IBC, hazardous materials, radiation compliance.
+
+- id: oats
+  name: UC OATS
+  kind: system
+  category: Compliance
+  platform: UC OATS
+  provided_by: UC OATS Program
+  run_by: [uc-oats]
+  business_owner: [vcr]
+  users: researchers
+  verified: false
+  note: Conflict of commitment / outside activity tracking.
+
+# ── Innovation & tech transfer ──────────────────────────────
+
+- id: pts-evolve
+  name: PTS → Evolve
+  kind: system
+  category: Innovation & Tech Transfer
+  platform: PTS homegrown (UCOP); Evolve is Wellspring (July 2026)
+  provided_by: UCOP (PTS); Wellspring (Evolve)
+  run_by: [ucop-it]
+  business_owner: [ipira]
+  status: forthcoming
+  note: Invention disclosures, patents, licensing, royalties, startups, equity.
+
+- id: artemis
+  name: Artemis
+  kind: system
+  category: Innovation & Tech Transfer
+  platform: Salesforce
+  provided_by: Salesforce + in-house config
+  run_by: [ipira-it]
+  business_owner: [ipira]
+  note: Invention disclosures, MTAs, Phoebe data, corporate business development, IPIRA events.
+
+- id: apollo
+  name: Apollo
+  kind: system
+  category: Innovation & Tech Transfer
+  platform: Salesforce
+  provided_by: Salesforce + in-house config
+  run_by: [vcs]
+  business_owner: [ipira]
+  note: Startups, licensing agreements, equity. Berkeley hosts for multiple campuses.
+
+# ── Research data ───────────────────────────────────────────
+
+- id: redcap
+  name: REDCap
+  kind: system
+  category: Research Data
+  platform: REDCap (HIPAA-compliant)
+  provided_by: Vanderbilt (REDCap consortium)
+  run_by: [research-it]
+  business_owner: [research-it]
+  users: Research IT, researchers
+  note: Secure data collection/management; DUA support.
+
+# ── Research museums ────────────────────────────────────────
+
+- id: cspace
+  name: CollectionSpace (CSpace)
+  kind: system
+  category: Research Museums
+  platform: Open-source collections management
+  provided_by: Lyrasis
+  run_by: [research-it]
+  business_owner: [nhm]
+  verified: false
+  note: Sheet says provider "RIT/Lyrasis". UC Botanical Garden, Hearst, BAMPFA, Jepson Herbaria.
+
+- id: arctos
+  name: Arctos
+  kind: system
+  category: Research Museums
+  platform: Arctos (consortium)
+  provided_by: Arctos consortium
+  run_by: [nhm]
+  business_owner: [nhm]
+  verified: false
+  note: Vertebrate Zoology and other NHMs.
+
+- id: go-model
+  name: GO Model
+  kind: system
+  category: Research Museums
+  platform: unknown
+  provided_by: unknown
+  run_by: [nhm]
+  business_owner: [nhm]
+  verified: false
+  note: Essig Museum.
+
+# ── Core facilities ─────────────────────────────────────────
+
+- id: core-facilities
+  name: Core Facility Systems (various)
+  kind: system
+  category: Core Facilities
+  platform: No campus standard (marketplace = iLab, Stratocore)
+  provided_by: Various vendors
+  run_by: [vendors]
+  business_owner: [vendors]
+  verified: false
+  note: Booking/billing for shared resources; run by individual facilities.
