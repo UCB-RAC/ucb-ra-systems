@@ -331,7 +331,7 @@
   category: Compliance
   part_of: rac-calshare
   business_owner: [rac]
-  note: \"RAC Operations Support System \" compliance management plan tracking
+  note: '"RAC Operations Support System" compliance management plan tracking'
 
 - id: rachel
   name: R.A.C.H.E.L.
@@ -339,7 +339,7 @@
   category: Compliance
   part_of: rac-calshare
   business_owner: [rac]
-  note: \"Research Administration Compliance Historic Evidentiary Locker\" document management for research security/ethics compliance
+  note: '"Research Administration Compliance Historic Evidentiary Locker" document management for research security/ethics compliance'
 
 - id: eprotocol
   name: Berkeley eProtocol
