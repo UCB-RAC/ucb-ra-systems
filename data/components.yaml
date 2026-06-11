@@ -317,25 +317,29 @@
   status: being-replaced
   verified: false
 
-- id: ross
-  name: R.O.S.S.
-  kind: application
-  category: Compliance
+- id: rac-calshare
+  name: RAC CalShare
+  kind: system
   platform: SharePoint
   uses: [calshare]
   run_by: [rac-is]
   business_owner: [rac]
-  note: COI / outside-activity disclosure applications built on SharePoint
+
+- id: ross
+  name: R.O.S.S.
+  kind: application
+  category: Compliance
+  part_of: rac-calshare
+  business_owner: [rac]
+  note: \"RAC Operations Support System \" compliance management plan tracking
 
 - id: rachel
   name: R.A.C.H.E.L.
   kind: application
   category: Compliance
-  platform: SharePoint
-  uses: [calshare]
-  run_by: [rac-is]
+  part_of: rac-calshare
   business_owner: [rac]
-  note: COI / outside-activity disclosure applications built on SharePoint
+  note: \"Research Administration Compliance Historic Evidentiary Locker\" document management for research security/ethics compliance
 
 - id: eprotocol
   name: Berkeley eProtocol
