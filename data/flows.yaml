@@ -26,6 +26,8 @@
 
 # ── Human / notification flows (examples of mode + via + actor endpoints) ──
 - {from: pi, to: share-intake, label: "Proposal request details", mode: manual, verified: true}
+- {from: pi, to: eprotocol-irb, label: "Create IRB protocol", mode: manual, verified: true}
+- {from: pi, to: eprotocol-iacuc, label: "Create IACUC protocol", mode: manual, verified: true}
 - {from: share-intake, to: phoebe, label: "Proposal entry", mode: manual, verified: true}
 # - {from: ers, to: pi, label: "Effort certification reminders", via: email, verified: false}
 
