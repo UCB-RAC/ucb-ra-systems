@@ -86,8 +86,6 @@
 - id: phoebe
   name: Phoebe
   kind: system
-  category: Proposal & Award
-  platform: Open source (Kuali, Alfresco, Solr, Camunda) + bespoke
   provided_by: In-house (RAC IS)
   run_by: [rac-is]
   technical_owner: Ken Geis, RAC IS (VCR)
@@ -95,7 +93,32 @@
   uses: [vmware-cluster, oracle-db]
   users: BRS RA, SPO, IAO, CGA
   apis: yes
-  note: End-to-end sponsored projects lifecycle — proposal development, routing, award tracking. Also hosts COI disclosure (see ross-rachel for the SharePoint side).
+  note: End-to-end sponsored projects lifecycle — proposal development, routing, award tracking.
+
+- id: phoebe-search
+  name: Phoebe Search
+  kind: application
+  part_of: phoebe
+  platform: Apache Solr, bespoke Grails
+  business_owner: [rac]
+  apis: yes
+
+- id: phoebe-kc
+  name: Phoebe Proposal/Award/Subaward
+  kind: application
+  part_of: phoebe
+  category: Proposal & Award
+  platform: Kuali Research Administration
+  business_owner: [rac]
+  apis: yes
+
+- id: phoebe-alfresco
+  name: Phoebe Alfresco
+  kind: application
+  part_of: phoebe
+  platform: Alfresco
+  business_owner: [rac]
+  apis: yes
 
 - id: share-intake
   name: SHARE Proposal Intake Form
@@ -354,7 +377,6 @@
   run_by: [vendors]
   business_owner: [olac]
   apis: yes
-  verified: false
   note: Lab animal financial tracking, billing, space management.
 
 - id: ehs-webapps
@@ -419,7 +441,7 @@
   platform: Salesforce
   provided_by: Salesforce + in-house config
   run_by: [ipira-it]
-  business_owner: [ipira]
+  business_owner: [iao]
   note: Invention disclosures, MTAs, Phoebe data, corporate business development, IPIRA events.
 
 - id: apollo

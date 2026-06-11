@@ -48,13 +48,11 @@
 - id: iao
   name: Industry Alliances Office (IAO)
   parent: ipira
-  verified: false
 
 - id: vcs
   name: Venture Capital Services
-  parent: ipira
-  verified: false
-  note: Hosts Apollo for multiple campuses; reporting line unconfirmed.
+  parent: ucb
+  note: Chancellor's Office. Hosts Apollo for multiple campuses.
 
 - id: research-it
   name: Research IT
