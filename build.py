@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate data/*.yaml and render docs/research-admin-diagrams.html.
+"""Validate data/*.yaml and render docs/index.html.
 
 Usage:  python3 build.py   (or: uv run python build.py)
 Requires: pyyaml
@@ -12,7 +12,7 @@ import yaml
 
 ROOT = Path(__file__).parent
 DATA = ROOT / "data"
-OUT = ROOT / "docs" / "research-admin-diagrams.html"
+OUT = ROOT / "docs" / "index.html"
 TEMPLATE = ROOT / "templates" / "viewer.html"
 
 KINDS = {"platform", "system", "application"}

@@ -5,7 +5,7 @@ Diagrams-as-data for UC Berkeley's research administration landscape. Edit four 
 ## Workflow
 
 ```
-edit data/*.yaml  →  uv run python build.py  →  open docs/research-admin-diagrams.html
+edit data/*.yaml  →  uv run python build.py  →  open docs/index.html
 ```
 
 The script validates referential integrity (unknown ids, missing parents, cycles, bad kinds, self-referencing `uses`) and refuses to build on errors. Requires `pyyaml`.
@@ -54,4 +54,4 @@ Triggers: multiple editors, ad-hoc queries ("everything that touches Oracle"), o
 
 The data is already shaped like a property graph (nodes: orgs/components/actors/phases; edges: parent, part_of, uses, run_by, flows, participations), so the LadybugDB migration would be mostly mechanical.
 
-`docs/research-admin-diagrams.html` is regenerated on every build — never edit it by hand. It loads D3 and the Inter font from CDNs; everything else is self-contained.
+`docs/index.html` is regenerated on every build — never edit it by hand. It loads D3 and the Inter font from CDNs; everything else is self-contained.
