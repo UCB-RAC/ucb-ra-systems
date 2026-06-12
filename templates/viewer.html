@@ -218,6 +218,7 @@
     </header>
     <nav>
       <button data-view="tree" class="active">Ownership (org tree)</button>
+      <button data-view="lifecycle">Lifecycle</button>
       <button data-view="flows">Data flows</button>
       <!-- <button data-view="central">Central IT touchpoints</button> -->
     </nav>
@@ -246,6 +247,21 @@
             system; orgs with no components are hidden.
           </div>
           <svg id="svg-tree"></svg>
+        </div>
+
+        <div id="view-lifecycle" class="view">
+          <div class="legend" id="legend-lifecycle"></div>
+          <div class="hint">
+            Rows are user communities; columns follow the
+            <a
+              href="https://vcresearch.berkeley.edu/grant-life-cycle/overview"
+              target="_blank"
+              >VCR grant life cycle</a
+            >. A bar means that user works in that system during those phases —
+            hover for the activity, click for system details. Dashed = at least
+            one phase unverified.
+          </div>
+          <svg id="svg-lifecycle"></svg>
         </div>
 
         <div id="view-flows" class="view">
@@ -712,11 +728,284 @@
         .querySelectorAll("input[name=rel]")
         .forEach((r) => (r.onchange = renderTree));
       renderTree();
+
+      /* ───────── view: lifecycle swimlanes ───────── */
+      function renderLifecycle() {
+        const Ph = DATA.lifecycle.phases;
+        const parts = DATA.lifecycle.participations;
+        const svg = d3.select("#svg-lifecycle");
+        svg.selectAll("*").remove();
+        if (!Ph.length) return;
+        const phaseIdx = Object.fromEntries(Ph.map((p, i) => [p.id, i]));
+        const phaseName = Object.fromEntries(Ph.map((p) => [p.id, p.name]));
+
+        const barH = textSize("Mg", "comp-label").h + 12;
+        const rowGap = 8,
+          laneGap = 10,
+          lanePad = 8,
+          colW = 170,
+          bandH = 26,
+          phaseHeadH = 46;
+        const headerH = bandH + phaseHeadH + 6;
+
+        const lanes = DATA.actors.filter((a) =>
+          parts.some((p) => p.actor === a.id),
+        );
+        const gutter =
+          Math.max(
+            ...lanes.flatMap((a) =>
+              wrapText(a.name, "org-label", 170).map(
+                (l) => textSize(l, "org-label").w,
+              ),
+            ),
+          ) + 28;
+        const W = gutter + colW * Ph.length + 16;
+
+        // ── layout lanes/bars ──
+        let y = headerH;
+        const bars = [],
+          laneBoxes = [];
+        lanes.forEach((a, li) => {
+          // collect this lane's bars: one per contiguous phase run of (actor, component)
+          const laneBars = [];
+          const comps = [
+            ...new Set(
+              parts.filter((p) => p.actor === a.id).map((p) => p.component),
+            ),
+          ];
+          comps.forEach((cid) => {
+            const ps = parts
+              .filter((p) => p.actor === a.id && p.component === cid)
+              .sort((x, z) => phaseIdx[x.phase] - phaseIdx[z.phase]);
+            let run = [ps[0]];
+            const runs = [run];
+            for (let i = 1; i < ps.length; i++) {
+              if (phaseIdx[ps[i].phase] === phaseIdx[ps[i - 1].phase] + 1)
+                run.push(ps[i]);
+              else runs.push((run = [ps[i]]));
+            }
+            runs.forEach((r) =>
+              laneBars.push({
+                comp: compById[cid],
+                actor: a,
+                start: phaseIdx[r[0].phase],
+                end: phaseIdx[r[r.length - 1].phase],
+                ps: r,
+              }),
+            );
+          });
+
+          // pack bars into rows: interval partitioning (sort by start,
+          // first-fit row whose last bar ends before this one starts) —
+          // greedy is optimal for intervals, minimum number of rows
+          laneBars.sort((p, q) => p.start - q.start || q.end - p.end);
+          const rowEnds = [];
+          laneBars.forEach((b) => {
+            let r = rowEnds.findIndex((e) => e < b.start);
+            if (r === -1) {
+              r = rowEnds.length;
+              rowEnds.push(b.end);
+            } else rowEnds[r] = b.end;
+            b.row = r;
+          });
+
+          const y0 = y;
+          laneBars.forEach((b) => {
+            b.y = y0 + lanePad + b.row * (barH + rowGap);
+            bars.push(b);
+          });
+          y =
+            y0 +
+            lanePad * 2 +
+            rowEnds.length * (barH + rowGap) -
+            (rowEnds.length ? rowGap : 0);
+          laneBoxes.push({ actor: a, y0, y1: y, odd: li % 2 === 1 });
+          y += laneGap;
+        });
+        const H = y + 6;
+        svg.attr("width", W).attr("height", H);
+
+        // ── lane backgrounds + labels ──
+        svg
+          .append("g")
+          .selectAll("rect")
+          .data(laneBoxes)
+          .join("rect")
+          .attr("x", 0)
+          .attr("y", (d) => d.y0)
+          .attr("width", W - 16)
+          .attr("height", (d) => d.y1 - d.y0)
+          .attr("fill", (d) => (d.odd ? "#eef1f6" : "#f7f8fa"));
+        const laneLabel = svg
+          .append("g")
+          .selectAll("text")
+          .data(laneBoxes)
+          .join("text")
+          .attr("class", "org-label");
+        laneLabel
+          .selectAll("tspan")
+          .data((d) => {
+            const lines = wrapText(d.actor.name, "org-label", 170);
+            return lines.map((l, i) => ({
+              l,
+              i,
+              n: lines.length,
+              cy: (d.y0 + d.y1) / 2,
+            }));
+          })
+          .join("tspan")
+          .attr("x", 10)
+          .attr("y", (t) => t.cy)
+          .attr("dy", (t) =>
+            t.i === 0 ? `${0.32 - (t.n - 1) * 0.55}em` : "1.1em",
+          )
+          .text((t) => t.l);
+
+        // ── header: band strip + phase names ──
+        const bandRuns = [];
+        Ph.forEach((p, i) => {
+          const last = bandRuns[bandRuns.length - 1];
+          if (last && last.band === p.band) last.end = i;
+          else bandRuns.push({ band: p.band, start: i, end: i });
+        });
+        const bandColor = d3.scaleOrdinal(
+          [...new Set(Ph.map((p) => p.band))],
+          ["#cfdded", "#fbe9c4", "#d6e8d9"],
+        );
+        const hdr = svg.append("g");
+        hdr
+          .selectAll("rect")
+          .data(bandRuns)
+          .join("rect")
+          .attr("x", (d) => gutter + d.start * colW)
+          .attr("y", 0)
+          .attr("width", (d) => (d.end - d.start + 1) * colW)
+          .attr("height", bandH)
+          .attr("rx", 4)
+          .attr("fill", (d) => bandColor(d.band));
+        hdr
+          .selectAll("text.band")
+          .data(bandRuns)
+          .join("text")
+          .attr("class", "org-label band")
+          .attr("text-anchor", "middle")
+          .attr("x", (d) => gutter + ((d.start + d.end + 1) / 2) * colW)
+          .attr("y", bandH / 2)
+          .attr("dy", "0.34em")
+          .text((d) => d.band);
+        const phHead = hdr
+          .selectAll("text.ph")
+          .data(Ph)
+          .join("text")
+          .attr("class", "comp-label ph")
+          .attr("text-anchor", "middle");
+        phHead
+          .selectAll("tspan")
+          .data((p, i) => {
+            const lines = wrapText(p.name, "comp-label", colW - 24);
+            return lines.map((l, j) => ({
+              l,
+              j,
+              x: gutter + (i + 0.5) * colW,
+            }));
+          })
+          .join("tspan")
+          .attr("x", (t) => t.x)
+          .attr("y", bandH + 16)
+          .attr("dy", (t) => `${t.j * 1.15}em`)
+          .text((t) => t.l);
+
+        // ── column grid lines ──
+        svg
+          .append("g")
+          .selectAll("line")
+          .data(d3.range(Ph.length + 1))
+          .join("line")
+          .attr("x1", (i) => gutter + i * colW)
+          .attr("x2", (i) => gutter + i * colW)
+          .attr("y1", headerH - 4)
+          .attr("y2", H - 4)
+          .attr("stroke", "#d8dde5")
+          .attr("stroke-width", 1);
+
+        // ── bars ──
+        const bar = svg
+          .append("g")
+          .selectAll("g")
+          .data(bars)
+          .join("g")
+          .style("cursor", "pointer");
+        bar
+          .append("rect")
+          .attr("x", (d) => gutter + d.start * colW + 6)
+          .attr("y", (d) => d.y)
+          .attr("width", (d) => (d.end - d.start + 1) * colW - 12)
+          .attr("height", barH)
+          .attr("rx", 5)
+          .attr("fill", (d) =>
+            d3.color(catColor(d.comp.category)).copy({ opacity: 0.25 }),
+          )
+          .attr("stroke", (d) => catColor(d.comp.category))
+          .attr("stroke-width", 1.5)
+          .attr("class", (d) =>
+            d.ps.some((p) => !p.verified) ? "unverified" : null,
+          );
+        bar
+          .append("text")
+          .attr("class", "comp-label")
+          .attr("x", (d) => gutter + ((d.start + d.end + 1) / 2) * colW)
+          .attr("y", (d) => d.y + barH / 2)
+          .attr("dy", "0.34em")
+          .attr("text-anchor", "middle")
+          .text((d) => {
+            const label =
+              d.comp.name + (d.ps.some((p) => !p.verified) ? " ?" : "");
+            const max = (d.end - d.start + 1) * colW - 24;
+            if (textSize(label, "comp-label").w <= max) return label;
+            let s = label;
+            while (s.length > 3 && textSize(s + "…", "comp-label").w > max)
+              s = s.slice(0, -1);
+            return s + "…";
+          });
+        bar
+          .append("title")
+          .text(
+            (d) =>
+              `${d.comp.name} — ${d.actor.name}\n` +
+              d.ps
+                .map(
+                  (p) =>
+                    `${phaseName[p.phase]}: ${p.activity || "—"}${
+                      p.verified ? "" : " (unverified)"
+                    }`,
+                )
+                .join("\n"),
+          );
+        bar.on("click", (e, d) => showDetails(d.comp));
+
+        // ── legend ──
+        const lg = d3.select("#legend-lifecycle").html("");
+        [...new Set(bars.map((b) => b.comp.category))]
+          .sort()
+          .forEach((c) =>
+            lg
+              .append("span")
+              .html(
+                `<span class="sw" style="background:${catColor(c)}"></span>${c}`,
+              ),
+          );
+        lg.append("span").html(
+          '<span class="sw" style="background:repeating-linear-gradient(90deg,#64748b 0 4px,#fff 4px 7px)"></span>dashed = unverified',
+        );
+      }
+      renderLifecycle();
+
       // re-measure once the Inter webfont is loaded (first pass may have
       // measured the fallback font)
       document.fonts.ready.then(() => {
         measureCache.clear();
         renderTree();
+        renderLifecycle();
       });
 
       /* ───────── shared force-graph helpers ───────── */

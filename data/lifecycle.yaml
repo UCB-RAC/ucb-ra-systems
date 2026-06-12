@@ -1,0 +1,85 @@
+# Sponsored research lifecycle, per https://vcresearch.berkeley.edu/grant-life-cycle/overview
+#
+# phases:        ordered list (order here = left→right in the timeline view)
+#                  id, name, band (Pre-Award | Award Set-Up | Post-Award)
+# participations: the 3-way relationship (component, actor, phase)
+#                  component  id from components.yaml
+#                  actor      id from actors.yaml
+#                  phase      id from phases below
+#                  activity   what that user does with that system in that phase
+#                  verified   false => Claude's inference — CONFIRM OR DELETE
+#
+# A component+actor pair spanning consecutive phases renders as one bar.
+# Edit freely, then run:  python3 build.py
+
+phases:
+  # - {id: define-project, name: Define Project, band: Pre-Award}
+  - {id: find-funding, name: Find Funding, band: Pre-Award}
+  - {id: develop-proposal, name: Develop Proposal, band: Pre-Award}
+  - {id: submit-proposal, name: Submit Proposal, band: Pre-Award}
+  - {id: accept-award, name: Accept Award, band: Award Set-Up}
+  - {id: manage-award, name: Manage Award, band: Post-Award}
+  - {id: share-research, name: Share Research, band: Post-Award}
+
+participations:
+  # ── Find funding ──────────────────────────────────────────
+  - {component: pivot, actor: pi, phase: find-funding, activity: "Search funding opportunities", verified: false}
+  - {component: pivot, actor: brdo-staff, phase: find-funding, activity: "Curate opportunities, support searches", verified: false}
+  - {component: infoready, actor: pi, phase: find-funding, activity: "Apply to internal competitions & limited submissions", verified: false}
+  - {component: infoready, actor: brdo-staff, phase: find-funding, activity: "Run internal competitions & limited submissions", verified: false}
+
+  # ── Develop proposal ──────────────────────────────────────
+  - {component: share-intake, actor: pi, phase: develop-proposal, activity: "Submit proposal intake request", verified: false}
+  - {component: share-intake, actor: ra, phase: develop-proposal, activity: "Triage intake, open proposal tasks", verified: false}
+  - {component: phoebe-proposal, actor: ra, phase: develop-proposal, activity: "Develop proposal record & budget", verified: true}
+  - {component: eprotocol-irb, actor: pi, phase: develop-proposal, activity: "Create IRB protocol", verified: false}
+  - {component: eprotocol-iacuc, actor: pi, phase: develop-proposal, activity: "Create animal use protocol (AUP)", verified: false}
+  - {component: oats, actor: pi, phase: develop-proposal, activity: "Disclose outside activities (conflict of commitment)", verified: false}
+
+  # protocol review runs from proposal development through the life of the award
+  - {component: eprotocol-irb, actor: ophs-staff, phase: develop-proposal, activity: "Protocol review", verified: true}
+  - {component: eprotocol-irb, actor: ophs-staff, phase: submit-proposal, activity: "Protocol review", verified: true}
+  - {component: eprotocol-irb, actor: ophs-staff, phase: accept-award, activity: "Approval verification before award release", verified: true}
+  - {component: eprotocol-irb, actor: ophs-staff, phase: manage-award, activity: "Continuing review, amendments", verified: true}
+  - {component: eprotocol-iacuc, actor: acuc-staff, phase: develop-proposal, activity: "AUP review", verified: true}
+  - {component: eprotocol-iacuc, actor: acuc-staff, phase: submit-proposal, activity: "AUP review", verified: true}
+  - {component: eprotocol-iacuc, actor: acuc-staff, phase: accept-award, activity: "Approval verification before award release", verified: true}
+  - {component: eprotocol-iacuc, actor: acuc-staff, phase: manage-award, activity: "Continuing review, amendments", verified: true}
+
+  # ── Submit proposal ───────────────────────────────────────
+  - {component: phoebe-proposal, actor: ra, phase: submit-proposal, activity: "Finalize and route proposal", verified: true}
+  - {component: phoebe-proposal, actor: pi, phase: submit-proposal, activity: "Certify and approve proposal", verified: false}
+  - {component: phoebe-proposal, actor: spo-staff, phase: submit-proposal, activity: "Review & submit to federal/state/non-profit sponsors", verified: false}
+  - {component: phoebe-proposal, actor: iao-staff, phase: submit-proposal, activity: "Review & submit industry proposals", verified: false}
+
+  # ── Accept award (award set-up) ───────────────────────────
+  - {component: phoebe, actor: spo-staff, phase: accept-award, activity: "Negotiate & accept award", verified: false}
+  - {component: phoebe, actor: iao-staff, phase: accept-award, activity: "Negotiate industry awards", verified: false}
+  - {component: phoebe, actor: ra, phase: accept-award, activity: "Award setup support, budget prep", verified: false}
+  - {component: bfs, actor: cga-staff, phase: accept-award, activity: "Fund setup, budget upload with RA", verified: false}
+  - {component: bfs, actor: ra, phase: accept-award, activity: "Prepare budget for fund setup", verified: false}
+
+  # ── Manage award ──────────────────────────────────────────
+  - {component: phoebe, actor: ra, phase: manage-award, activity: "Award modifications, subawards", verified: false}
+  - {component: bfs, actor: cga-staff, phase: manage-award, activity: "Invoicing, financial reporting, closeout", verified: false}
+  - {component: bfs, actor: ra, phase: manage-award, activity: "Expense tracking, cost transfers, deficit clearing", verified: false}
+  - {component: pi-portfolio, actor: pi, phase: manage-award, activity: "Monitor award balances & projections", verified: false}
+  - {component: pi-portfolio, actor: ra, phase: manage-award, activity: "Support PI financial reviews", verified: false}
+  - {component: share-smartsheet, actor: ra, phase: manage-award, activity: "Monthly work queue (SHARE)", verified: false}
+  - {component: erso-intranet, actor: pi, phase: manage-award, activity: "Request purchases, travel, HR (CoE)", verified: false}
+  - {component: erso-intranet, actor: ra, phase: manage-award, activity: "Transaction processing & workflow (ERSO)", verified: false}
+  - {component: ers, actor: pi, phase: manage-award, activity: "Certify effort on federal awards", verified: false}
+  - {component: ers, actor: cga-staff, phase: manage-award, activity: "Administer effort reporting, audit support", verified: false}
+  - {component: ucpath, actor: ra, phase: manage-award, activity: "Manage employee funding distributions on awards", verified: false}
+  - {component: redcap, actor: pi, phase: manage-award, activity: "Collect & manage study data", verified: false}
+  - {component: bets, actor: scm-staff, phase: manage-award, activity: "Track equipment purchased on sponsored funds", verified: false}
+  - {component: bets, actor: cga-staff, phase: manage-award, activity: "Equipment compliance at closeout", verified: false}
+  - {component: cal-answers, actor: ra, phase: manage-award, activity: "Award reporting & analysis", verified: false}
+
+  # ── Share research / IP ───────────────────────────────────
+  - {component: pts, actor: pi, phase: share-research, activity: "Disclose inventions", verified: false}
+  - {component: pts, actor: ipira-staff, phase: share-research, activity: "Patents, licensing, royalties", verified: false}
+  - {component: evolve, actor: ipira-staff, phase: share-research, activity: "IP lifecycle (from July 2026)", verified: false}
+  - {component: artemis, actor: iao-staff, phase: manage-award, activity: "Track MTAs, industry engagement", verified: false}
+  - {component: artemis, actor: iao-staff, phase: share-research, activity: "NCDs, business development", verified: false}
+  - {component: apollo, actor: ipira-staff, phase: share-research, activity: "Startup equity & licensing value", verified: false}

@@ -103,8 +103,17 @@
   business_owner: [rac]
   apis: yes
 
-- id: phoebe-kc
-  name: Phoebe Proposal/Award/Subaward
+- id: phoebe-proposal
+  name: Phoebe Proposal
+  kind: application
+  part_of: phoebe
+  category: Proposal & Award
+  platform: Kuali Research Administration
+  business_owner: [rac]
+  apis: yes
+
+- id: phoebe-award
+  name: Phoebe Award/Subaward
   kind: application
   part_of: phoebe
   category: Proposal & Award
@@ -355,7 +364,7 @@
   note: Vendor-developed, administered by bIT Oracle and Unix teams, technical owner in RAC IS.
 
 - id: eprotocol-irb
-  name: eProtocol IRB module
+  name: eProtocol IRB
   kind: application
   part_of: eprotocol
   category: Compliance
@@ -364,7 +373,7 @@
   note: Human subjects protocol submission, review, approval.
 
 - id: eprotocol-iacuc
-  name: eProtocol IACUC module
+  name: eProtocol IACUC
   kind: application
   part_of: eprotocol
   category: Compliance
@@ -417,7 +426,7 @@
 # ── Innovation & tech transfer ──────────────────────────────
 
 - id: pts
-  name: PTS
+  name: Patent Tracking System (PTS)
   kind: system
   category: Innovation & Tech Transfer
   platform: homegrown (UCOP)

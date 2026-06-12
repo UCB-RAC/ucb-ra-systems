@@ -26,11 +26,15 @@ Each component carries three distinct technical roles plus a business one: `prov
 
 `data/flows.yaml` — data flows: `from`, `to`, `label`, optional `mode: manual` (👤 icon), `via: email` (✉ icon), endpoints may be actors.
 
-`data/actors.yaml` — human endpoints for flows.
+`data/actors.yaml` — human actors (PIs, RAs, SPO officers...). Endpoints for flows and the "user" leg of lifecycle participations; file order = lane order in the lifecycle view.
+
+`data/lifecycle.yaml` — the sponsored research lifecycle: ordered `phases` (from the [VCR grant life cycle](https://vcresearch.berkeley.edu/grant-life-cycle/overview)) and `participations`, the three-way relationship (component, actor, phase) with an `activity` label. A system→phase mapping alone would mislead — the same system serves different users differently per phase (Phoebe is an SPO submission tool pre-award and a CGA data source at setup), so the ternary relation is the unit of record.
 
 ## The three views
 
 **Ownership** — org forest, toggled between *run by* and *business owner* attachment. Orgs with no components are hidden; applications nest under their system (italic); platforms are gray pills; click an org circle to collapse its branch.
+
+**Lifecycle** — swimlane timeline: actor lanes × lifecycle phases. A bar spanning phases means that user community works in that system through those phases; hover shows the per-phase activity, click opens system details. Phase bands (Pre-Award / Award Set-Up / Post-Award) follow the VCR page. An empty column (Define Project) is honest: no admin system participates there yet.
 
 **Data flows** — force graph with category filters; dashed = unverified; icons mark manual/email flows; actor nodes show 👤.
 
@@ -42,6 +46,12 @@ Items with `verified: false` (currently 42) render dashed with "?" — they cont
 
 ## If we outgrow YAML
 
-Triggers: multiple editors, ad-hoc queries ("everything that touches Oracle"), or ~150+ components. Plan: migrate to SQLite (still one file, editable with DB Browser, build script barely changes); the alternative is adopting LikeC4/Structurizr DSL for standard C4 tooling at the cost of remodeling.
+Triggers: multiple editors, ad-hoc queries ("everything that touches Oracle"), or ~150+ components. Candidates, in rough order of fit:
+
+1. **LadybugDB** (KuzuDB successor, Ken's suggestion) — an embedded graph database whose Cypher `CREATE`/`MERGE` statements are themselves text-editable files, so the "edit text, regenerate" workflow survives intact, and relationship-heavy questions (uses chains, ternary participations) become one-line Cypher queries instead of bespoke JS.
+2. **SQLite** — one file, DB Browser editing, mechanical migration; queries via SQL but graph traversals get clumsy.
+3. **LikeC4 / Structurizr DSL** — standard C4 tooling for free, at the cost of remodeling and losing the ternary lifecycle relation, which C4 doesn't natively express.
+
+The data is already shaped like a property graph (nodes: orgs/components/actors/phases; edges: parent, part_of, uses, run_by, flows, participations), so the LadybugDB migration would be mostly mechanical.
 
 `docs/research-admin-diagrams.html` is regenerated on every build — never edit it by hand. It loads D3 and the Inter font from CDNs; everything else is self-contained.

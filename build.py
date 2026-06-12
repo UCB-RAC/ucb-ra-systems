@@ -30,7 +30,7 @@ def fail(errors):
     sys.exit(1)
 
 
-def validate(orgs, comps, flows, actors):
+def validate(orgs, comps, flows, actors, lifecycle):
     errors = []
     org_ids = [o["id"] for o in orgs]
     comp_ids = [c["id"] for c in comps]
@@ -100,6 +100,22 @@ def validate(orgs, comps, flows, actors):
         if fl.get("mode", "automated") not in ("automated", "manual"):
             errors.append(f"flow #{i + 1} mode must be automated|manual")
 
+    phases = lifecycle.get("phases") or []
+    phase_ids = [p["id"] for p in phases]
+    dupes = {p for p in phase_ids if phase_ids.count(p) > 1}
+    if dupes:
+        errors.append(f"duplicate phase ids: {sorted(dupes)}")
+    phase_set = set(phase_ids)
+    actor_set = set(actor_ids)
+    for i, pt in enumerate(lifecycle.get("participations") or []):
+        where = f"participation #{i + 1} ({pt.get('component')}/{pt.get('actor')}/{pt.get('phase')})"
+        if pt.get("component") not in comp_set:
+            errors.append(f"{where}: unknown component")
+        if pt.get("actor") not in actor_set:
+            errors.append(f"{where}: unknown actor")
+        if pt.get("phase") not in phase_set:
+            errors.append(f"{where}: unknown phase")
+
     if errors:
         fail(errors)
 
@@ -109,7 +125,8 @@ def main():
     comps = load("components.yaml")
     flows = load("flows.yaml")
     actors = load("actors.yaml")
-    validate(orgs, comps, flows, actors)
+    lifecycle = load("lifecycle.yaml") or {}
+    validate(orgs, comps, flows, actors, lifecycle)
 
     by_comp = {c["id"]: c for c in comps}
     for c in comps:
@@ -123,6 +140,8 @@ def main():
             c[field] = (v if isinstance(v, list) else [v]) if v else []
         if not c.get("provided_by") and parent is not None:
             c["provided_by"] = parent.get("provided_by")
+        if not c.get("category"):
+            c["category"] = (parent.get("category") if parent else None) or "Uncategorized"
         c.setdefault("verified", True)
         c.setdefault("status", "active")
     for o in orgs:
@@ -131,17 +150,33 @@ def main():
         f.setdefault("verified", False)
         f.setdefault("mode", "automated")
 
-    data = {"orgs": orgs, "components": comps, "flows": flows, "actors": actors}
+    participations = lifecycle.get("participations") or []
+    for pt in participations:
+        pt.setdefault("verified", False)
+
+    data = {
+        "orgs": orgs,
+        "components": comps,
+        "flows": flows,
+        "actors": actors,
+        "lifecycle": {
+            "phases": lifecycle.get("phases") or [],
+            "participations": participations,
+        },
+    }
     html = TEMPLATE.read_text().replace(
         "/*__DATA__*/", "const DATA = " + json.dumps(data, indent=1) + ";"
     )
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(html)
 
-    unverified = sum(1 for x in orgs + comps + flows if not x.get("verified", True))
+    unverified = sum(
+        1 for x in orgs + comps + flows + participations if not x.get("verified", True)
+    )
     kinds = {k: sum(1 for c in comps if c["kind"] == k) for k in sorted(KINDS)}
     print(f"OK: {len(orgs)} orgs, {len(comps)} components ({kinds}), "
-          f"{len(flows)} flows, {len(actors)} actors ({unverified} items unverified)")
+          f"{len(flows)} flows, {len(actors)} actors, "
+          f"{len(participations)} lifecycle participations ({unverified} items unverified)")
     print(f"Wrote {OUT.relative_to(ROOT)}")
 
 
