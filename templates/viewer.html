@@ -212,20 +212,33 @@
   <body>
     <header>
       <h1>Research Administration Systems</h1>
-      <span class="sub"
-        >UC Berkeley</span
-      >
+      <span class="sub">UC Berkeley</span>
     </header>
     <nav>
-      <button data-view="tree" class="active">Ownership (org tree)</button>
-      <button data-view="lifecycle">Lifecycle</button>
+      <button data-view="lifecycle" class="active">Lifecycle</button>
+      <button data-view="tree">Ownership (org tree)</button>
       <button data-view="flows">Data flows</button>
       <!-- <button data-view="central">Central IT touchpoints</button> -->
     </nav>
 
     <div class="wrap">
       <main>
-        <div id="view-tree" class="view active">
+        <div id="view-lifecycle" class="view active">
+          <div class="legend" id="legend-lifecycle"></div>
+          <div class="hint">
+            Rows are user communities; columns follow the
+            <a
+              href="https://vcresearch.berkeley.edu/grant-life-cycle/overview"
+              target="_blank"
+              >VCR grant life cycle</a
+            >. A bar means that user works in that system during those phases —
+            hover for the activity, click for system details. Dashed = at least
+            one phase unverified.
+          </div>
+          <svg id="svg-lifecycle"></svg>
+        </div>
+
+        <div id="view-tree" class="view">
           <div class="controls">
             <span>Attach components by:</span>
             <label
@@ -247,21 +260,6 @@
             system; orgs with no components are hidden.
           </div>
           <svg id="svg-tree"></svg>
-        </div>
-
-        <div id="view-lifecycle" class="view">
-          <div class="legend" id="legend-lifecycle"></div>
-          <div class="hint">
-            Rows are user communities; columns follow the
-            <a
-              href="https://vcresearch.berkeley.edu/grant-life-cycle/overview"
-              target="_blank"
-              >VCR grant life cycle</a
-            >. A bar means that user works in that system during those phases —
-            hover for the activity, click for system details. Dashed = at least
-            one phase unverified.
-          </div>
-          <svg id="svg-lifecycle"></svg>
         </div>
 
         <div id="view-flows" class="view">
@@ -991,7 +989,9 @@
             lg
               .append("span")
               .html(
-                `<span class="sw" style="background:${catColor(c)}"></span>${c}`,
+                `<span class="sw" style="background:${catColor(
+                  c,
+                )}"></span>${c}`,
               ),
           );
         lg.append("span").html(
